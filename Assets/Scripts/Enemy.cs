@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour
     SpriteRenderer  spriteRenderer;
     float           immunityTimer;
     float           angle;
+    bool            initialCanCapture;
 
     void Start()
     {
@@ -34,6 +35,8 @@ public class Enemy : MonoBehaviour
 
         velocity = maxSpeed * Random.insideUnitCircle.normalized;
         angle = Random.Range(0.0f, 360.0f);
+
+        initialCanCapture = canCapture;
     }
 
     void Update()
@@ -86,11 +89,9 @@ public class Enemy : MonoBehaviour
         {
             transform.position -= delta;
 
-            // Reflect velocity along the collision normal
-            var n = hit.normal;                  // already normalized
+            var n = hit.normal;                  
             velocity = Vector2.Reflect(velocity, n);
 
-            // (optional) small positional correction to avoid immediate re-collision
             Vector2 pos2D = transform.position;
             float dist = Vector2.Distance(pos2D, hit.position);
             float penetration = radius - dist;  
@@ -105,6 +106,20 @@ public class Enemy : MonoBehaviour
         while (angle >= 360.0f) angle -= 360.0f;
 
         transform.rotation = Quaternion.Euler(0.0f, 0.0f, angle);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (immunityTimer > 0) return;
+        if (canCapture) return;
+
+        PlayerConstraint player = collision.GetComponentInParent<PlayerConstraint>();
+        if (player != null)
+        {
+            player.Hurt(this);
+            canCapture = initialCanCapture;
+            immunityTimer = immunityDuration;
+        }
     }
 
     private void OnDrawGizmosSelected()

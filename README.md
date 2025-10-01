@@ -7,9 +7,11 @@ Created within the REPLAY European Master Program in game design, for the game j
 
 ## Todo
 
-* Do constraint system
+* Controller/keyboard setup
 * Grab entities
 * Create bad units
+* Gamepad shake
+* Music + SFX
 
 ## Art
 

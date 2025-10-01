@@ -28,6 +28,10 @@ public class PlayerConstraint : MonoBehaviour
     private PlayerInput     playerInput;
     [SerializeField]
     private CtrlPoint[]     ctrlPoints;
+    [SerializeField]
+    private float           radius = 10.0f;
+    [SerializeField]
+    private LayerMask       wallMask;
 
     private float lastCaptureTime;
 
@@ -129,6 +133,14 @@ public class PlayerConstraint : MonoBehaviour
         foreach (var ctrl in ctrlPoints)
         {
             ctrl.moveDir = ctrl.moveCtrl.GetAxis2().xy0();
+
+            var hit = LineCollisionDetector.IsColliding(ctrl.transform.position, radius, wallMask);
+            if (hit != null)
+            {
+                Hurt(null);
+                ctrl.transform.position = hit.position - hit.normal * radius * 1.1f;
+                ctrl.velocity = -hit.normal * maxMoveSpeed;
+            }
         }
     }
 
