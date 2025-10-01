@@ -542,7 +542,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1027170970}
   - component: {fileID: 1027170971}
-  - component: {fileID: 1027170972}
+  - component: {fileID: 1027170973}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -598,7 +598,7 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &1027170972
+--- !u!114 &1027170973
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -607,15 +607,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1027170969}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f55ee18b62a250b49bdfbbeb5955f41b, type: 3}
+  m_Script: {fileID: 11500000, guid: 48c5d8d8d67611044b872b33c68cebec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxMoveSpeed: 200
   acceleration: 1600
   drag: 4
-  springConstant: 200
-  restLength: 200
-  minDist: 20
+  minMaxDistance: {x: 20, y: 200}
   playerInput: {fileID: 1027170971}
   ctrlPoints:
   - transform: {fileID: 842868305}

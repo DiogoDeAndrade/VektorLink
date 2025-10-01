@@ -3,7 +3,7 @@ using UC;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour
+public class PlayerSpring : MonoBehaviour
 {
     [Serializable]
     private record CtrlPoint
