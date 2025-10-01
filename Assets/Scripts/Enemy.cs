@@ -7,6 +7,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] 
     private float     maxSpeed;
     [SerializeField] 
+    private float     angularSpeed;
+    [SerializeField] 
     private float     radius = 10.0f;
     [SerializeField] 
     private bool      canCapture;
@@ -24,12 +26,14 @@ public class Enemy : MonoBehaviour
     Vector2         velocity;
     SpriteRenderer  spriteRenderer;
     float           immunityTimer;
+    float           angle;
 
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         velocity = maxSpeed * Random.insideUnitCircle.normalized;
+        angle = Random.Range(0.0f, 360.0f);
     }
 
     void Update()
@@ -89,12 +93,18 @@ public class Enemy : MonoBehaviour
             // (optional) small positional correction to avoid immediate re-collision
             Vector2 pos2D = transform.position;
             float dist = Vector2.Distance(pos2D, hit.position);
-            float penetration = radius - dist;
+            float penetration = radius - dist;  
             if (penetration > 0f)
             {
                 transform.position += (Vector3)(n * (penetration + 0.001f));
             }
         }
+
+        angle += angularSpeed * Time.deltaTime;
+        while (angle < 0.0f) angle += 360.0f;
+        while (angle >= 360.0f) angle -= 360.0f;
+
+        transform.rotation = Quaternion.Euler(0.0f, 0.0f, angle);
     }
 
     private void OnDrawGizmosSelected()
