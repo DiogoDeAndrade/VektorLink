@@ -29,6 +29,8 @@ public class PlayerConstraint : MonoBehaviour
     [SerializeField]
     private CtrlPoint[]     ctrlPoints;
 
+    private float lastCaptureTime;
+
     void Start()
     {
         foreach (var ctrl in ctrlPoints)
@@ -128,5 +130,17 @@ public class PlayerConstraint : MonoBehaviour
         {
             ctrl.moveDir = ctrl.moveCtrl.GetAxis2().xy0();
         }
+    }
+
+    public void Capture(Enemy enemy)
+    {
+        lastCaptureTime = Time.time;
+        minMaxDistance.y += 20.0f;
+    }
+
+    public void Hurt(Enemy enemy)
+    {
+        minMaxDistance.y = Mathf.Max(minMaxDistance.x, minMaxDistance.y - 40.0f);
+        CameraShake2d.Shake(10.0f, 0.2f);
     }
 }
