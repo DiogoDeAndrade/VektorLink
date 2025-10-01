@@ -7,8 +7,7 @@ Created within the REPLAY European Master Program in game design, for the game j
 
 ## Todo
 
-* Move cursors (player)
-* Generate line
+* Do constraint system
 * Grab entities
 * Create bad units
 
