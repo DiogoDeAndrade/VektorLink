@@ -2,36 +2,45 @@ using NaughtyAttributes;
 using UC;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class Enemy : MonoBehaviour
 {
     [SerializeField] 
-    private float     maxSpeed;
+    protected float     maxSpeed;
     [SerializeField] 
-    private float     angularSpeed;
+    protected float     angularSpeed;
     [SerializeField] 
-    private float     radius = 10.0f;
+    protected float     radius = 10.0f;
     [SerializeField] 
-    private bool      canCapture;
+    protected bool      canCapture;
     [SerializeField, ShowIf(nameof(canCapture))] 
-    private Color     captureColor = Color.white;
+    protected Color     captureColor = Color.white;
     [SerializeField, ShowIf(nameof(canCapture))] 
-    private float     immunityDuration = 2.0f;
+    protected float     immunityDuration = 2.0f;
     [SerializeField] 
-    private Color     hostileColor = Color.red;
+    protected Color     hostileColor = Color.red;
     [SerializeField] 
-    private LayerMask wallMask;
+    protected LayerMask wallMask;
     [SerializeField] 
-    private LayerMask playerBeamMask;
+    protected LayerMask playerBeamMask;
     [SerializeField]
-    private GameObject blast;
+    protected GameObject blast;
+    [SerializeField]
+    protected int       captureScore = 50;
+    [SerializeField]
+    protected int       killScore = 100;
 
-    Vector2         velocity;
-    SpriteRenderer  spriteRenderer;
-    float           immunityTimer;
-    float           angle;
-    bool            initialCanCapture;
+    protected Vector2           velocity;
+    protected SpriteRenderer    spriteRenderer;
+    protected float             immunityTimer;
+    protected float             angle;
+    protected bool              initialCanCapture;
+    protected PlayerConstraint  player;
 
-    void Start()
+    protected virtual void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
 
@@ -39,9 +48,10 @@ public class Enemy : MonoBehaviour
         angle = Random.Range(0.0f, 360.0f);
 
         initialCanCapture = canCapture;
+        player = FindFirstObjectByType<PlayerConstraint>();
     }
 
-    void Update()
+    protected virtual void Update()
     {
         if (canCapture)
         {
@@ -69,6 +79,8 @@ public class Enemy : MonoBehaviour
                     var ps = psObj.GetComponent<ParticleSystem>();
                     ps?.SetColor(captureColor);
                     ps?.Play();
+
+                    player.ChangeScore(captureScore, true);
                 }
                 }
         }
@@ -127,7 +139,7 @@ public class Enemy : MonoBehaviour
         transform.rotation = Quaternion.Euler(0.0f, 0.0f, angle);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected void OnTriggerEnter2D(Collider2D collision)
     {
         if (immunityTimer > 0) return;
         if (canCapture) return;
@@ -141,9 +153,29 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmosSelected()
+    public bool isGoal => !canCapture;
+
+    protected void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, radius);
     }
+
+    public void Kill()
+    {
+        var psObj = Instantiate(blast, transform.position, Quaternion.identity);
+        var ps = psObj.GetComponent<ParticleSystem>();
+        ps?.SetColor(hostileColor);
+        ps?.Play();
+
+        Destroy(gameObject);
+
+        player.ChangeScore(killScore, false);
+    }
+}
+
+[System.Serializable]
+public class EnemyList : ProbList<Enemy>
+{
+
 }

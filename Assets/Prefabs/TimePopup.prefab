@@ -189,7 +189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97cbbfa5f1111824083da35e76dd586d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  duration: 0.6
+  duration: 1
   colorOverTime:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
@@ -209,7 +209,7 @@ MonoBehaviour:
     ctime6: 0
     ctime7: 0
     atime0: 0
-    atime1: 35435
+    atime1: 42293
     atime2: 65535
     atime3: 0
     atime4: 0

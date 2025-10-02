@@ -1,13 +1,23 @@
 using System;
+using System.Collections;
 using TMPro;
 using UC;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Processors;
 using UnityEngine.SceneManagement;
+using static PlayerConstraint;
 
 public class PlayerConstraint : MonoBehaviour
 {
+    public delegate void OnHurt(Enemy enemy);
+    public event OnHurt onHurt;
+
+    public delegate void OnChangeScore(int score);
+    public event OnChangeScore onChangeScore;
+
+    public delegate void OnChangeMultiplier(int score);
+    public event OnChangeMultiplier onChangeMultiplier;
+
     [Serializable]
     private record CtrlPoint
     {
@@ -33,6 +43,8 @@ public class PlayerConstraint : MonoBehaviour
     private CtrlPoint[]     ctrlPoints;
     [SerializeField, InputPlayer(nameof(playerInput)), InputButton]
     private UC.InputControl restartButton;
+    [SerializeField, InputPlayer(nameof(playerInput)), InputButton]
+    private UC.InputControl swapButton;
     [SerializeField, Header("Collision")]
     private float           radius = 10.0f;
     [SerializeField]
@@ -63,10 +75,16 @@ public class PlayerConstraint : MonoBehaviour
     private float           baseTimeIncrementByMuliplier = 1f;
     [SerializeField]
     private float           baseTimeDecrement = 2f;
+    [SerializeField]
+    private GameObject      gameOverObj;
+    [SerializeField]
+    private SoundDef        gameOverSnd;
 
     private float lastCaptureTime = float.NegativeInfinity;
     private int multiplier = 1;
     private float _lifetime;
+    private bool isSwapping = false;
+    private int score = 0;
 
     public float lifetime => _lifetime;
     public bool isDead => (_lifetime <= 0);
@@ -80,11 +98,14 @@ public class PlayerConstraint : MonoBehaviour
             ctrl.moveCtrl.playerInput = playerInput;
         }
         restartButton.playerInput = playerInput;
+        swapButton.playerInput = playerInput;
     }
 
     void FixedUpdate()
     {
         if (isDead) return;
+
+        if (isSwapping) return;
 
         for (int i = 0; i < ctrlPoints.Length; i++)
         {
@@ -177,24 +198,40 @@ public class PlayerConstraint : MonoBehaviour
             {
                 FullscreenFader.FadeOut(0.5f, Color.black, () =>
                 {
+                    GameManager.Instance.ResetGame();
                     SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
                 });
             }
         }
-        foreach (var ctrl in ctrlPoints)
+
+        if (swapButton.IsDown())
         {
-            ctrl.moveDir = ctrl.moveCtrl.GetAxis2().xy0();
-
-            var hit = LineCollisionDetector.IsColliding(ctrl.transform.position, radius, wallMask);
-            if (hit != null)
+            var lineUpdate = GetComponentInChildren<LineBetweenPoints>();
+            if (lineUpdate)
             {
-                Hurt(null);
-                ctrl.transform.position = hit.position - hit.normal * radius * 1.1f;
-                ctrl.velocity = -hit.normal * maxMoveSpeed;
+                isSwapping = true;
+                lineUpdate.enabled = false;
+                StartCoroutine(SwappingCR());
+            }
+        }
 
-                var psObj = Instantiate(wallHurtFX, hit.position, Quaternion.LookRotation(Vector3.forward, hit.normal));
-                var ps = psObj.GetComponent<ParticleSystem>();
-                ps?.Play();
+        if (!isSwapping)
+        {
+            foreach (var ctrl in ctrlPoints)
+            {
+                ctrl.moveDir = ctrl.moveCtrl.GetAxis2().xy0();
+
+                var hit = LineCollisionDetector.IsColliding(ctrl.transform.position, radius, wallMask);
+                if (hit != null)
+                {
+                    Hurt(null);
+                    ctrl.transform.position = hit.position - hit.normal * radius * 1.1f;
+                    ctrl.velocity = -hit.normal * maxMoveSpeed;
+
+                    var psObj = Instantiate(wallHurtFX, hit.position, Quaternion.LookRotation(Vector3.forward, hit.normal));
+                    var ps = psObj.GetComponent<ParticleSystem>();
+                    ps?.Play();
+                }
             }
         }
 
@@ -202,24 +239,38 @@ public class PlayerConstraint : MonoBehaviour
         {
             if (_lifetime > 0.0f)
             {
-                _lifetime -= Time.deltaTime;
-
-                if (isDead)
-                {
-                    foreach (var ctrl in ctrlPoints)
-                    {
-                        var sr = ctrl.transform.GetComponent<SpriteRenderer>();
-
-                        var psObj = Instantiate(hurtFX, ctrl.transform.position, Quaternion.identity);
-                        var ps = psObj.GetComponent<ParticleSystem>();
-                        ps?.SetColor(sr.color);
-                        ps?.Play();
-                        sr.enabled = false;
-                        Destroy(GetComponentInChildren<LineRenderer>().gameObject);
-                    }
-                }
+                ChangeLifetime(-Time.deltaTime);
             }
         }
+    }
+
+    IEnumerator SwappingCR()
+    {
+        Vector3 t1 = ctrlPoints[0].transform.position;
+        Vector3 t2 = ctrlPoints[1].transform.position;
+
+        float totalSwapTime = 0.25f;
+        float elapsedTime = 0.0f;
+        float p = 0.5f;
+        
+        while (elapsedTime < totalSwapTime)
+        {
+            elapsedTime += Time.deltaTime;
+
+            float t = elapsedTime / totalSwapTime;
+            ctrlPoints[0].transform.position = Vector3.Lerp(t1, t2, Mathf.Pow(t, p));
+            ctrlPoints[1].transform.position = Vector3.Lerp(t2, t1, Mathf.Pow(t, p));
+
+            yield return null;
+        }
+
+        ctrlPoints[0].transform.position = t2;
+        ctrlPoints[1].transform.position = t1;
+
+        isSwapping = false;
+
+        var lineUpdate = GetComponentInChildren<LineBetweenPoints>();
+        lineUpdate.enabled = true;
     }
 
     public void Capture(Enemy enemy)
@@ -230,11 +281,11 @@ public class PlayerConstraint : MonoBehaviour
 
         if ((Time.time - lastCaptureTime) > multiplierTime)
         {
-            multiplier = 1;
+            ChangeMultiplier(1);
         }
         else
         {
-            multiplier++;
+            ChangeMultiplier(multiplier + 1);
         }
 
         captureSnd?.Play(1.0f, 0.95f + 0.05f * multiplier);
@@ -243,7 +294,7 @@ public class PlayerConstraint : MonoBehaviour
         minMaxDistance.y += baseLengthIncrement + multiplier * baseLengthIncrementByMuliplier;
 
         int deltaLifetime = Mathf.FloorToInt(baseTimeIncrement + multiplier * baseTimeIncrementByMuliplier);
-        _lifetime += deltaLifetime;
+        ChangeLifetime(deltaLifetime);
 
         text = $"+{deltaLifetime}<size=70%>s";
 
@@ -266,7 +317,7 @@ public class PlayerConstraint : MonoBehaviour
 
         if (enemy)
         {
-            _lifetime = Mathf.Max(0, _lifetime - baseTimeDecrement);
+            ChangeLifetime(-baseTimeDecrement);
 
             var textObj = Instantiate(popupText, enemy.transform.position + Vector3.up * 15.0f, Quaternion.identity);
             textObj.color = Color.red;
@@ -281,6 +332,52 @@ public class PlayerConstraint : MonoBehaviour
             ps?.Play();
         }
 
+        ChangeMultiplier(1);
         lastCaptureTime = float.NegativeInfinity;
+
+        onHurt?.Invoke(enemy);
+    }
+
+    void ChangeLifetime(float lifeDelta)
+    {
+        _lifetime = Mathf.Max(0, _lifetime + lifeDelta);
+        if (lifeDelta < 0)
+        {
+            if (isDead)
+            {
+                foreach (var ctrl in ctrlPoints)
+                {
+                    var sr = ctrl.transform.GetComponent<SpriteRenderer>();
+
+                    var psObj = Instantiate(hurtFX, ctrl.transform.position, Quaternion.identity);
+                    var ps = psObj.GetComponent<ParticleSystem>();
+                    ps?.SetColor(sr.color);
+                    ps?.Play();
+                    sr.enabled = false;
+                    Destroy(GetComponentInChildren<LineRenderer>().gameObject);
+                }
+
+                gameOverObj.SetActive(true);
+                gameOverSnd?.Play();
+            }
+        }
+    }
+
+    public Transform GetTransform(int idx)
+    {
+        return ctrlPoints[idx].transform;
+    }
+
+    public void ChangeScore(int deltaScore, bool useLengthModifier)
+    {
+        float len = Vector3.Distance(ctrlPoints[0].transform.position, ctrlPoints[1].transform.position) / minMaxDistance.y;
+        score += Mathf.CeilToInt(deltaScore * len * multiplier);
+        onChangeScore?.Invoke(score);
+    }
+
+    public void ChangeMultiplier(int multiplier)
+    {
+        this.multiplier = multiplier;
+        onChangeMultiplier?.Invoke(multiplier);
     }
 }

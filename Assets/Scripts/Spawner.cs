@@ -1,23 +1,32 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UC;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private int            initialCount;
-    [SerializeField] private int            maxCount;
-    [SerializeField] private float          turnTime;
-    [SerializeField] private int            spawnPerTurns;
-    [SerializeField] private List<Enemy>    enemyPrefabs;
-
     float turnTimer;
     BoxCollider2D spawnArea;
+    WaveDef waveDef;
 
     void Start()
     {
-        turnTimer = turnTime;
+        waveDef = GameManager.Instance.GetWave();
+        turnTimer = waveDef.turnTime;
         spawnArea = GetComponent<BoxCollider2D>();
-        Spawn(initialCount);
+        Spawn(waveDef.initialCount);
+
+        GameManager.Instance.onChangeWave += Instance_onChangeWave;
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.Instance.onChangeWave -= Instance_onChangeWave;
+    }
+
+    private void Instance_onChangeWave(int wave)
+    {
+        waveDef = GameManager.Instance.GetWave();
+        turnTimer = waveDef.turnTime;
+        Spawn(waveDef.initialCount);
     }
 
     private void Spawn(int count)
@@ -32,9 +41,9 @@ public class Spawner : MonoBehaviour
     private void Spawn()
     {
         var enemies = GameObject.FindObjectsByType<Enemy>(FindObjectsSortMode.None);
-        if (enemies.Length < maxCount)
+        if (enemies.Length < waveDef.maxCount)
         {
-            var enemy = enemyPrefabs.Random();
+            var enemy = waveDef.enemyPrefabs.Get();
             var spawnPoint = spawnArea.Random();
             var newObj = Instantiate(enemy, spawnPoint, Quaternion.identity);
         }
@@ -45,8 +54,8 @@ public class Spawner : MonoBehaviour
         turnTimer -= Time.deltaTime;
         if (turnTimer <= 0.0f)
         {
-            Spawn(spawnPerTurns);
-            turnTimer = turnTime;
+            Spawn(waveDef.spawnPerTurns);
+            turnTimer = waveDef.turnTime;
         }
     }
 }

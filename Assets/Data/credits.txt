@@ -1,0 +1,25 @@
+VEKTOR LINK
+<size=60%>A Game By Diogo de Andrade
+
+Special Thanks
+<size=60%>Wilson Almeida
+<size=60%>Everybody at REPLAY
+<size=60%>Óbidos Municipality
+
+Art
+<size=60%>Font Digital Display by Chequered Ink, free for non-commercial use.
+<size=60%>Font 911 Porscha by Iconian Fonts, free for non-commercial use.
+<size=60%>Font Planet Kosmos by The Planet, free for non-commercial use.
+<size=60%>Everything else done by Diogo de Andrade, CC0 license
+
+Sound
+<size=60%>Game Start Sound by plasterbrain, [CC0] license.
+<size=60%>Music by SunoAI
+<size=60%>Everything else done by Diogo de Andrade, CC0 license
+
+Code
+<size=60%>Some code was adapted/refactored from Okapi Kit and UnityCommon library, MIT license
+<size=60%>All remaining game source code by Diogo de Andrade, MIT license
+
+<size=60%>Full game source available at https://github.com/DiogoDeAndrade/VektorLink
+<size=60%>with complete credits (links, licences, etc)
