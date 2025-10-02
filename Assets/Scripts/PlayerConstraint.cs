@@ -1,7 +1,10 @@
 using System;
+using TMPro;
 using UC;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Processors;
+using UnityEngine.SceneManagement;
 
 public class PlayerConstraint : MonoBehaviour
 {
@@ -16,7 +19,7 @@ public class PlayerConstraint : MonoBehaviour
         [HideInInspector]
         public Vector3          velocity = Vector3.zero;
     }
-    [SerializeField]
+    [SerializeField, Header("Movement")]
     private float           maxMoveSpeed = 200.0f;
     [SerializeField]
     private float           acceleration = 1600.0f;
@@ -28,23 +31,61 @@ public class PlayerConstraint : MonoBehaviour
     private PlayerInput     playerInput;
     [SerializeField]
     private CtrlPoint[]     ctrlPoints;
-    [SerializeField]
+    [SerializeField, InputPlayer(nameof(playerInput)), InputButton]
+    private UC.InputControl restartButton;
+    [SerializeField, Header("Collision")]
     private float           radius = 10.0f;
     [SerializeField]
     private LayerMask       wallMask;
+    [SerializeField, Header("FX")]
+    private GameObject      wallHurtFX;
+    [SerializeField]
+    private GameObject      hurtFX;
+    [SerializeField]
+    private SoundDef        hurtSnd;
+    [SerializeField, Header("Capture")]
+    private SoundDef        captureSnd;
+    [SerializeField]
+    private float           multiplierTime;
+    [SerializeField]
+    private TextMeshPro     popupText;
+    [SerializeField, Header("Length")]
+    private float           baseLengthIncrement = 10f;
+    [SerializeField]
+    private float           baseLengthIncrementByMuliplier = 10f;
+    [SerializeField]
+    private float           baseLengthDecrement = 40f;
+    [SerializeField, Header("Lifetime")]
+    private float           initialTime = 10.0f;
+    [SerializeField]
+    private float           baseTimeIncrement = 1f;
+    [SerializeField]
+    private float           baseTimeIncrementByMuliplier = 1f;
+    [SerializeField]
+    private float           baseTimeDecrement = 2f;
 
-    private float lastCaptureTime;
+    private float lastCaptureTime = float.NegativeInfinity;
+    private int multiplier = 1;
+    private float _lifetime;
+
+    public float lifetime => _lifetime;
+    public bool isDead => (_lifetime <= 0);
 
     void Start()
     {
+        _lifetime = initialTime;
+
         foreach (var ctrl in ctrlPoints)
         {
             ctrl.moveCtrl.playerInput = playerInput;
         }
+        restartButton.playerInput = playerInput;
     }
 
     void FixedUpdate()
     {
+        if (isDead) return;
+
         for (int i = 0; i < ctrlPoints.Length; i++)
         {
             var ctrl = ctrlPoints[i];
@@ -130,6 +171,16 @@ public class PlayerConstraint : MonoBehaviour
 
     private void Update()
     {
+        if (isDead)
+        {
+            if (restartButton.IsDown())
+            {
+                FullscreenFader.FadeOut(0.5f, Color.black, () =>
+                {
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                });
+            }
+        }
         foreach (var ctrl in ctrlPoints)
         {
             ctrl.moveDir = ctrl.moveCtrl.GetAxis2().xy0();
@@ -140,19 +191,96 @@ public class PlayerConstraint : MonoBehaviour
                 Hurt(null);
                 ctrl.transform.position = hit.position - hit.normal * radius * 1.1f;
                 ctrl.velocity = -hit.normal * maxMoveSpeed;
+
+                var psObj = Instantiate(wallHurtFX, hit.position, Quaternion.LookRotation(Vector3.forward, hit.normal));
+                var ps = psObj.GetComponent<ParticleSystem>();
+                ps?.Play();
+            }
+        }
+
+        if (!isDead)
+        {
+            if (_lifetime > 0.0f)
+            {
+                _lifetime -= Time.deltaTime;
+
+                if (isDead)
+                {
+                    foreach (var ctrl in ctrlPoints)
+                    {
+                        var sr = ctrl.transform.GetComponent<SpriteRenderer>();
+
+                        var psObj = Instantiate(hurtFX, ctrl.transform.position, Quaternion.identity);
+                        var ps = psObj.GetComponent<ParticleSystem>();
+                        ps?.SetColor(sr.color);
+                        ps?.Play();
+                        sr.enabled = false;
+                        Destroy(GetComponentInChildren<LineRenderer>().gameObject);
+                    }
+                }
             }
         }
     }
 
     public void Capture(Enemy enemy)
     {
+        if (isDead) return;
+
+        string text = "";
+
+        if ((Time.time - lastCaptureTime) > multiplierTime)
+        {
+            multiplier = 1;
+        }
+        else
+        {
+            multiplier++;
+        }
+
+        captureSnd?.Play(1.0f, 0.95f + 0.05f * multiplier);
+
         lastCaptureTime = Time.time;
-        minMaxDistance.y += 20.0f;
+        minMaxDistance.y += baseLengthIncrement + multiplier * baseLengthIncrementByMuliplier;
+
+        int deltaLifetime = Mathf.FloorToInt(baseTimeIncrement + multiplier * baseTimeIncrementByMuliplier);
+        _lifetime += deltaLifetime;
+
+        text = $"+{deltaLifetime}<size=70%>s";
+
+        if (text != "")
+        {
+            var textObj = Instantiate(popupText, enemy.transform.position + Vector3.up * 15.0f, Quaternion.identity);
+            textObj.color = Color.green;
+            textObj.text = text;
+        }
     }
 
-    public void Hurt(Enemy enemy)
+    public void Hurt(Enemy enemy, Transform damageTarget = null)
     {
-        minMaxDistance.y = Mathf.Max(minMaxDistance.x, minMaxDistance.y - 40.0f);
+        if (isDead) return;
+
+        minMaxDistance.y = Mathf.Max(minMaxDistance.x, minMaxDistance.y - baseLengthDecrement);
         CameraShake2d.Shake(10.0f, 0.2f);
+
+        hurtSnd?.Play();
+
+        if (enemy)
+        {
+            _lifetime = Mathf.Max(0, _lifetime - baseTimeDecrement);
+
+            var textObj = Instantiate(popupText, enemy.transform.position + Vector3.up * 15.0f, Quaternion.identity);
+            textObj.color = Color.red;
+            textObj.text = $"-{baseTimeDecrement}<size=70%>s";
+        }
+
+        if (damageTarget)
+        {
+            var psObj = Instantiate(hurtFX, damageTarget.position, Quaternion.identity);
+            var ps = psObj.GetComponent<ParticleSystem>();
+            ps?.SetColor(damageTarget.GetComponent<SpriteRenderer>().color);
+            ps?.Play();
+        }
+
+        lastCaptureTime = float.NegativeInfinity;
     }
 }

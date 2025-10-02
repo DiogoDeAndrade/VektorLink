@@ -15,10 +15,14 @@ Created within the REPLAY European Master Program in game design, for the game j
 
 ## Art
 
+- Font [911 Porscha](https://www.dafont.com/pt/911porscha.font) by [Iconian Fonts](http://www.iconian.com/), free for non-commercial use.
+- Font [Planet Kosmos](https://www.dafont.com/pt/planet-kosmos.font) by [The Planet](http://www.planet.dk/), free for non-commercial use.
 - Everything else done by [Diogo de Andrade], licensed through the [CC0] license.
 
 ## Sound
 
+- [Game Start Sound](https://freesound.org/people/plasterbrain/sounds/243020/) by [plasterbrain](https://freesound.org/people/plasterbrain/), [CC0] license.
+- Music by [Suno](https://suno.com/)
 - Everything else done by [Diogo de Andrade], licensed through the [CC0] license.
 
 ## Code

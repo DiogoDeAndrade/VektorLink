@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6724263903347532729
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3289561350850360273, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 17.382244
+      objectReference: {fileID: 0}
+    - target: {fileID: 3289561350850360273, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -47.239494
+      objectReference: {fileID: 0}
+    - target: {fileID: 3289561350850360273, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.4903693
+      objectReference: {fileID: 0}
+    - target: {fileID: 3289561350850360273, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3289561350850360273, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3289561350850360273, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3289561350850360273, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3289561350850360273, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3289561350850360273, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3289561350850360273, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3815199610180898748, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: m_Name
+      value: WallHit Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 6255629989391932884, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: ShapeModule.type
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6255629989391932884, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: ShapeModule.arc.value
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 6255629989391932884, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6255629989391932884, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6255629989391932884, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.47058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 6255629989391932884, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0.52518034
+      objectReference: {fileID: 0}
+    - target: {fileID: 6255629989391932884, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0.9137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 6255629989391932884, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: InitialModule.startLifetime.minScalar
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6255629989391932884, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
+      value: 50
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
