@@ -7,8 +7,6 @@ public class MultiplierDisplay : MonoBehaviour
     TMP_Text            text;
     PlayerConstraint    player;
 
-    float timer = 0.0f;
-
     void Start()
     {
         player = FindFirstObjectByType<PlayerConstraint>();

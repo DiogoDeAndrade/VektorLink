@@ -7,8 +7,6 @@ public class ScoreDisplay : MonoBehaviour
     PlayerConstraint    player;
     Color               baseColor;
 
-    float timer = 0.0f;
-
     void Start()
     {
         player = FindFirstObjectByType<PlayerConstraint>();

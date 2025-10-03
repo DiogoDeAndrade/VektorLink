@@ -1,3 +1,6 @@
 [submodule "Assets/Externals/UnityCommon"]
 	path = Assets/Externals/UnityCommon
 	url = https://github.com/DiogoDeAndrade/UnityCommon
+[submodule "Assets/Externals/Private"]
+	path = Assets/Externals/Private
+	url = https://github.com/DiogoDeAndrade/VektorLinkPrivate
