@@ -1,9 +1,6 @@
 using Dan.Main;
-using Dan.Models;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class LeaderboardManager : MonoBehaviour
 {
@@ -16,6 +13,9 @@ public class LeaderboardManager : MonoBehaviour
     }
 
     List<HighScore> highScoreTable;
+    bool            _scoresAvailable = false;
+
+    public bool isScoresAvailable => _scoresAvailable;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,33 +40,30 @@ public class LeaderboardManager : MonoBehaviour
         Debug.Log("Update Entries");
         Leaderboards.VektorLinkLeaderboard.GetEntries(entries =>
         {
-            if (entries.Length == 0)
+            highScoreTable = new();
+            for (int i = 0; i < Mathf.Min(entries.Length, 10); i++)
             {
-                InitializeLeaderboard();
-            }
-            else
-            {
-                highScoreTable = new();
-                for (int i = 0; i < Mathf.Max(entries.Length, 10); i++)
+                highScoreTable.Add(new HighScore()
                 {
-                    highScoreTable.Add(new HighScore()
-                    {
-                        name = entries[i].Username,
-                        score = entries[i].Score
-                    });
-                }
+                    name = entries[i].Username,
+                    score = entries[i].Score
+                });
+            }
 
-                foreach (var c in highScoreTable)
-                {
-                    Debug.Log($"{c.name} {c.score}");
-                }
-            }
+            _scoresAvailable = true;
         });
     }
 
+    /*[Button("Initialize Leaderboard")]
     void InitializeLeaderboard()
     {
-        Debug.Log("InitializeLeaderboard");
+        
+        InitializeLeaderboard(0);
+    }
+
+    void InitializeLeaderboard(int index)
+    {
+        Debug.Log($"InitializeLeaderboard for {index}");
         string[] playerNames = new string[]
         {  
             "NEONRIDER",
@@ -80,17 +77,25 @@ public class LeaderboardManager : MonoBehaviour
             "ECLIPZER",
             "QUANTOR"
         };
-        for (int i = 0; i < playerNames.Length; i++)
+
+        Leaderboards.VektorLinkLeaderboard.ResetPlayer(() =>
         {
-            UploadScore(playerNames[i], i * 500, isSuccessful =>
+            UploadScore(playerNames[index], (index + 1) * 500, isSuccessful =>
             {
-                if (i == playerNames.Length - 1)
+                if (index < 9)
                 {
-                    UpdateEntries();
+                    StartCoroutine(InitializeLeaderboardCR(index + 1));
                 }
             });
-        }
+        });
     }
+
+    IEnumerator InitializeLeaderboardCR(int index)
+    {
+        yield return new WaitForSeconds(0.5f);
+        InitializeLeaderboard(index);
+
+    }*/
 
     public delegate void DoneAction(bool b);
 
