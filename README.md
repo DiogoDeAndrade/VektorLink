@@ -28,6 +28,7 @@ Created within the REPLAY European Master Program in game design, for the game j
 
 ## Code
 
+- Leaderboard system by [Daniel Jumagaliyev](https://danqzq.itch.io/leaderboard-creator)
 - Some code was adapted/refactored from [Okapi Kit], [MIT] license.
 - Uses [Unity Common], [MIT] license.
 - [NaughtyAttributes] by Denis Rizov available through the [MIT] license: https://github.com/dbrizov/NaughtyAttributes.git#upm

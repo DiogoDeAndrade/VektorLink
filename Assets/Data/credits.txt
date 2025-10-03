@@ -18,6 +18,7 @@ Sound
 <size=60%>Everything else done by Diogo de Andrade, CC0 license
 
 Code
+<size=60%>Leaderboard system by Daniel Jumagaliyev
 <size=60%>Some code was adapted/refactored from Okapi Kit and UnityCommon library, MIT license
 <size=60%>All remaining game source code by Diogo de Andrade, MIT license
 
