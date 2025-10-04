@@ -1,17 +1,30 @@
-# LINE FRONTIER
+![Title](Screenshots/banner.png)
 
 Created within the REPLAY European Master Program in game design, for the game jam taking place in Óbidos in October 2025. I'm serving as support for the event, but in the time I made this, under the event theme "Frontiers". 
 
+![Screenshot](Screenshots/screen04.png)
+
 ## Game
 
+You control two glowing nodes, linked by a beam of energy. With each analog stick you move one node - the link between them is your weapon.
+
+Enemies swarm the screen. When they cross your link, they ignite, turning from white to red. Clear every enemy to advance to the next stage.
+
+But beware:
+* Your time is always running out - keep scoring to stay alive.
+* Hitting a red enemy will drain your timer even faster.
+* When your time reaches zero... it's GAME OVER.
+
+Survive as long as you can, rack up the points, and push through wave after wave of neon chaos.
+
+![Screenshot](Screenshots/screen02.png)
 
 ## Todo
 
-* Controller/keyboard setup
-* Grab entities
-* Create bad units
+* Leaderboard
+* Pattern enemies
+* Shooting enemies
 * Gamepad shake
-* Music + SFX
 
 ## Art
 
