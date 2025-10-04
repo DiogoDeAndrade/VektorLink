@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using static PlayerConstraint;
+using Random = UnityEngine.Random;
 
 public class PlayerConstraint : MonoBehaviour
 {
@@ -42,7 +43,7 @@ public class PlayerConstraint : MonoBehaviour
     [SerializeField]
     private CtrlPoint[]     ctrlPoints;
     [SerializeField, InputPlayer(nameof(playerInput)), InputButton]
-    private UC.InputControl restartButton;
+    private UC.InputControl continueButton;
     [SerializeField, InputPlayer(nameof(playerInput)), InputButton]
     private UC.InputControl swapButton;
     [SerializeField, Header("Collision")]
@@ -76,15 +77,20 @@ public class PlayerConstraint : MonoBehaviour
     [SerializeField]
     private float           baseTimeDecrement = 2f;
     [SerializeField]
-    private GameObject      gameOverObj;
+    private CanvasGroup     gameOverCanvas;
     [SerializeField]
     private SoundDef        gameOverSnd;
+    [SerializeField]
+    private CanvasGroup     scoreEntryCanvas;
+    [SerializeField]
+    private CanvasGroup     leaderboardCanvas;
 
     private float lastCaptureTime = float.NegativeInfinity;
     private int multiplier = 1;
     private float _lifetime;
     private bool isSwapping = false;
     private int score = 0;
+    private bool highscoreHandling = false;
 
     public float lifetime => _lifetime;
     public bool isDead => (_lifetime <= 0);
@@ -97,7 +103,7 @@ public class PlayerConstraint : MonoBehaviour
         {
             ctrl.moveCtrl.playerInput = playerInput;
         }
-        restartButton.playerInput = playerInput;
+        continueButton.playerInput = playerInput;
         swapButton.playerInput = playerInput;
     }
 
@@ -192,17 +198,44 @@ public class PlayerConstraint : MonoBehaviour
 
     private void Update()
     {
+        if (highscoreHandling) return;
         if (isDead)
         {
-            if (restartButton.IsDown())
+            if (continueButton.IsDown())
             {
-                FullscreenFader.FadeOut(0.5f, Color.black, () =>
+                if (score > 0)
                 {
-                    GameManager.Instance.ResetGame();
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-                });
+                    highscoreHandling = true;
+                    var nameEntry = scoreEntryCanvas.GetComponentInChildren<NameEntry>();
+                    if (nameEntry)
+                    {
+                        nameEntry.onNameEntryComplete += NameEntry_onNameEntryComplete;
+                        gameOverCanvas.FadeOut(0.25f);
+                        scoreEntryCanvas.FadeIn(0.25f);
+
+                    }
+                    else
+                    {
+                        Restart();
+                    }
+                }
+                else
+                {
+                    Restart();
+                }
             }
+            return;
         }
+
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            score = 25;
+            onChangeScore?.Invoke(score);
+            ChangeLifetime(-10000);
+            return;
+        }
+#endif
 
         if (swapButton.IsDown())
         {
@@ -242,6 +275,39 @@ public class PlayerConstraint : MonoBehaviour
                 ChangeLifetime(-Time.deltaTime);
             }
         }
+    }
+
+    private void NameEntry_onNameEntryComplete(string name)
+    {
+        if (name == "")
+        {
+            Restart();
+            return;
+        }
+        scoreEntryCanvas.FadeOut(0.25f);
+        LeaderboardManager.UploadScore(name, score, OnUploadDone, true);
+    }
+
+    private void OnUploadDone(bool b)
+    {
+        if (!b) Restart();
+
+        LeaderboardManager.GetLocalVicinity((ourRank, localVicinity) =>
+        {
+            leaderboardCanvas.FadeIn(0.5f);
+            var leaderboardDisplay = leaderboardCanvas.GetComponentInChildren<LeaderboardDisplay>();
+            leaderboardDisplay.RefreshData(localVicinity, ourRank);
+            leaderboardDisplay.onBackPressed += Restart;
+        });
+    }
+
+    void Restart()
+    {
+        FullscreenFader.FadeOut(0.5f, Color.black, () =>
+        {
+            GameManager.Instance.ResetGame();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        });
     }
 
     IEnumerator SwappingCR()
@@ -357,7 +423,7 @@ public class PlayerConstraint : MonoBehaviour
                     Destroy(GetComponentInChildren<LineRenderer>().gameObject);
                 }
 
-                gameOverObj.SetActive(true);
+                gameOverCanvas.FadeIn(0.25f);
                 gameOverSnd?.Play();
             }
         }
@@ -379,5 +445,5 @@ public class PlayerConstraint : MonoBehaviour
     {
         this.multiplier = multiplier;
         onChangeMultiplier?.Invoke(multiplier);
-    }
+    }    
 }

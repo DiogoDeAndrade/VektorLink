@@ -21,10 +21,10 @@ Survive as long as you can, rack up the points, and push through wave after wave
 
 ## Todo
 
-* Leaderboard
 * Pattern enemies
 * Shooting enemies
 * Gamepad shake
+* Spellcaster Studios logo at start
 
 ## Art
 
