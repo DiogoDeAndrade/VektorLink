@@ -25,6 +25,6 @@ public class MultiplierDisplay : MonoBehaviour
         text.text = $"<size=80%>x<size=100%>{multiplier}";
 
         transform.localScale = Vector2.one * 1.5f;
-        transform.ScaleTo(Vector2.one, 0.35f, "ScaleText").EaseFunction(Ease.Sqrt);
+        transform.LocalScaleTo(Vector2.one, 0.35f, "ScaleText").EaseFunction(Ease.Sqrt);
     }
 }

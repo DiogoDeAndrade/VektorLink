@@ -34,7 +34,7 @@ public class TimeDisplay : MonoBehaviour
         {
             text.FlashColor(GetColor(), Color.red, 0.4f);
             transform.localScale = Vector2.one * 1.5f;
-            transform.ScaleTo(Vector2.one, 0.35f, "ScaleText").EaseFunction(Ease.Sqrt);
+            transform.LocalScaleTo(Vector2.one, 0.35f, "ScaleText").EaseFunction(Ease.Sqrt);
         }
     }
 
