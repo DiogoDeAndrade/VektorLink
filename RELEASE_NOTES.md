@@ -1,5 +1,9 @@
 # RELEASE NOTES
 
+## Version 1.2 (14/10/2025)
+
+- New logo and version text
+
 ## Version 1.1 (27/01/2025)
 
 - Added leaderboard

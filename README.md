@@ -46,7 +46,7 @@ Survive as long as you can, rack up the points, and push through wave after wave
 - Leaderboard system by [Daniel Jumagaliyev](https://danqzq.itch.io/leaderboard-creator)
 - Some code was adapted/refactored from [Okapi Kit], [MIT] license.
 - Uses [Unity Common], [MIT] license.
-- [NaughtyAttributes] by Denis Rizov available through the [MIT] license: https://github.com/dbrizov/NaughtyAttributes.git#upm
+- [NaughtyAttributes] by Denis Rizov available through the [MIT] license.
 - All remaining game source code by Diogo de Andrade is licensed under the [MIT] license.
 
 ## Metadata
@@ -62,4 +62,5 @@ Survive as long as you can, rack up the points, and push through wave after wave
 [CC-BY-NC 4.0]:https://creativecommons.org/licenses/by-nc/4.0/
 [OkapiKit]:https://github.com/VideojogosLusofona/OkapiKit
 [Unity Common]:https://github.com/DiogoDeAndrade/UnityCommon
+[NaughtyAttributes]:https://github.com/dbrizov/NaughtyAttributes.git#upm
 [MIT]:LICENSE
