@@ -4,6 +4,7 @@ using TMPro;
 using UC;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.SceneManagement;
 using static PlayerConstraint;
 using Random = UnityEngine.Random;
@@ -91,6 +92,7 @@ public class PlayerConstraint : MonoBehaviour
     private bool isSwapping = false;
     private int score = 0;
     private bool highscoreHandling = false;
+    private VibrationManager    vibrationManager;
 
     public float lifetime => _lifetime;
     public bool isDead => (_lifetime <= 0);
@@ -105,6 +107,8 @@ public class PlayerConstraint : MonoBehaviour
         }
         continueButton.playerInput = playerInput;
         swapButton.playerInput = playerInput;
+
+        vibrationManager = GetComponent<VibrationManager>();
     }
 
     void FixedUpdate()
@@ -379,6 +383,8 @@ public class PlayerConstraint : MonoBehaviour
             textObj.color = Color.green;
             textObj.text = text;
         }
+
+        vibrationManager.Vibrate(0.2f, 0.6f, 0.15f);
     }
 
     public void Hurt(Enemy enemy, Transform damageTarget = null)
@@ -387,6 +393,7 @@ public class PlayerConstraint : MonoBehaviour
 
         minMaxDistance.y = Mathf.Max(minMaxDistance.x, minMaxDistance.y - baseLengthDecrement);
         CameraShake2d.Shake(10.0f, 0.2f);
+        vibrationManager.Vibrate(0.6f, 0.2f, 0.15f);
 
         hurtSnd?.Play();
 

@@ -21,6 +21,8 @@ public class Enemy : MonoBehaviour
     [SerializeField, ShowIf(nameof(canCapture))] 
     protected float     immunityDuration = 2.0f;
     [SerializeField] 
+    protected float     blinkRate = 0.15f;
+    [SerializeField] 
     protected Color     hostileColor = Color.red;
     [SerializeField] 
     protected LayerMask wallMask;
@@ -39,6 +41,7 @@ public class Enemy : MonoBehaviour
     protected float             angle;
     protected bool              initialCanCapture;
     protected PlayerConstraint  player;
+    protected float             blinkTimer;
 
     protected virtual void Start()
     {
@@ -55,14 +58,23 @@ public class Enemy : MonoBehaviour
     {
         if (canCapture)
         {
-            spriteRenderer.color = captureColor;
-
             if (immunityTimer > 0)
             {
                 immunityTimer -= Time.deltaTime;
+                blinkTimer -= Time.deltaTime;
+                if (blinkTimer <= 0.0f)
+                {
+                    if (spriteRenderer.color == captureColor)
+                        spriteRenderer.color = hostileColor;
+                    else
+                        spriteRenderer.color = captureColor;
+                    blinkTimer = blinkRate;
+                }
             }
             else
             {
+                spriteRenderer.color = captureColor;
+
                 var collision = LineCollisionDetector.IsColliding(transform.position, radius, playerBeamMask);
                 if (collision != null)
                 {
@@ -74,6 +86,7 @@ public class Enemy : MonoBehaviour
 
                     canCapture = false;
                     immunityTimer = immunityDuration;
+                    blinkTimer = blinkRate;
 
                     var psObj = Instantiate(blast, transform.position, Quaternion.identity);
                     var ps = psObj.GetComponent<ParticleSystem>();
@@ -86,14 +99,23 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            spriteRenderer.color = hostileColor;
-
             if (immunityTimer > 0)
             {
                 immunityTimer -= Time.deltaTime;
+                blinkTimer -= Time.deltaTime;
+                if (blinkTimer <= 0.0f)
+                {
+                    if (spriteRenderer.color == captureColor)
+                        spriteRenderer.color = hostileColor;
+                    else
+                        spriteRenderer.color = captureColor;
+                    blinkTimer = blinkRate;
+                }
             }
             else
             {
+                spriteRenderer.color = hostileColor;
+
                 var collision = LineCollisionDetector.IsColliding(transform.position, radius, playerBeamMask);
                 if (collision != null)
                 {
@@ -103,6 +125,7 @@ public class Enemy : MonoBehaviour
                         player.Hurt(this);
                     }
                     immunityTimer = immunityDuration;
+                    blinkTimer = blinkRate;
 
                     var psObj = Instantiate(blast, transform.position, Quaternion.identity);
                     var ps = psObj.GetComponent<ParticleSystem>();
@@ -150,6 +173,7 @@ public class Enemy : MonoBehaviour
             player.Hurt(this, collision.transform);
             canCapture = initialCanCapture;
             immunityTimer = immunityDuration;
+            blinkTimer = blinkRate;
         }
     }
 

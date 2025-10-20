@@ -108,6 +108,7 @@ MonoBehaviour:
   canCapture: 1
   captureColor: {r: 1, g: 1, b: 1, a: 1}
   immunityDuration: 2
+  blinkRate: 0.05
   hostileColor: {r: 1, g: 0, b: 0, a: 1}
   wallMask:
     serializedVersion: 2
@@ -116,6 +117,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   blast: {fileID: 3815199610180898748, guid: 78c0c4b6853bf4442aaae634f03e23a1, type: 3}
+  captureScore: 50
+  killScore: 100
 --- !u!50 &-7674927329662417501
 Rigidbody2D:
   serializedVersion: 5

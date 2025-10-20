@@ -23,16 +23,12 @@ Survive as long as you can, rack up the points, and push through wave after wave
 
 * Pattern enemies
 * Shooting enemies
-* Gamepad shake
-* Spellcaster Studios logo at start
 * More waves
-* Wave text
 
 ## Art
 
 - Font [Digital Display](https://www.dafont.com/pt/digital-display.font) by [Chequered Ink](https://chequered.ink/), free for non-commercial use.
 - Font [911 Porscha](https://www.dafont.com/pt/911porscha.font) by [Iconian Fonts](http://www.iconian.com/), free for non-commercial use.
-- Font [Planet Kosmos](https://www.dafont.com/pt/planet-kosmos.font) by [The Planet](http://www.planet.dk/), free for non-commercial use.
 - Everything else done by [Diogo de Andrade], licensed through the [CC0] license.
 
 ## Sound

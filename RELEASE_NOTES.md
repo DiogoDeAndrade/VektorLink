@@ -1,5 +1,12 @@
 # RELEASE NOTES
 
+## Version 1.3 (?)
+
+- Fixed bug with wave transition
+- Added text with the wave number on transition
+- Added vibration to controller
+- Enemies blink on transitions
+
 ## Version 1.2 (14/10/2025)
 
 - New logo and version text

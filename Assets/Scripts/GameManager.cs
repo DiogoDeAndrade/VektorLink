@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
     public void ResetGame()
     {
         wave = 0;
+        onChangeWave?.Invoke(wave);
     }
 
     public WaveDef GetWave()
