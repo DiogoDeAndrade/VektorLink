@@ -57,6 +57,7 @@ public class LevelManager : MonoBehaviour
                 ChangeSong();
                 GameManager.Instance.NextWave();
                 waveDef = GameManager.Instance.GetWave();
+                levelHold = false;
             }
         }
         else

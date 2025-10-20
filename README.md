@@ -25,6 +25,8 @@ Survive as long as you can, rack up the points, and push through wave after wave
 * Shooting enemies
 * Gamepad shake
 * Spellcaster Studios logo at start
+* More waves
+* Wave text
 
 ## Art
 

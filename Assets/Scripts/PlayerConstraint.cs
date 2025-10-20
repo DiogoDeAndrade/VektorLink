@@ -297,7 +297,7 @@ public class PlayerConstraint : MonoBehaviour
             leaderboardCanvas.FadeIn(0.5f);
             var leaderboardDisplay = leaderboardCanvas.GetComponentInChildren<LeaderboardDisplay>();
             leaderboardDisplay.RefreshData(localVicinity, ourRank);
-            leaderboardDisplay.onBackPressed += Restart;
+            leaderboardDisplay.onBackPressed += BackToMenu;
         });
     }
 
@@ -307,6 +307,15 @@ public class PlayerConstraint : MonoBehaviour
         {
             GameManager.Instance.ResetGame();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        });
+    }
+
+    void BackToMenu()
+    {
+        FullscreenFader.FadeOut(0.5f, Color.black, () =>
+        {
+            GameManager.Instance.ResetGame();
+            SceneManager.LoadScene("Title");
         });
     }
 
