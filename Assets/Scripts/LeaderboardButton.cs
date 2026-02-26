@@ -19,7 +19,7 @@ public class LeaderboardButton : MonoBehaviour
 
     private void ShowLeaderboard(BaseUIControl control)
     {
-        mainUIGroup.SetEnable(false);
+        mainUIGroup.EnableUI(false);
 
         mainMenuCanvas.FadeOut(0.5f);
 
@@ -37,7 +37,7 @@ public class LeaderboardButton : MonoBehaviour
         var canvasGroup = leaderboardDisplay.GetComponent<CanvasGroup>();
         canvasGroup.FadeOut(0.5f);
 
-        mainUIGroup.SetEnable(true);
+        mainUIGroup.EnableUI(true);
         mainUIGroup.selectedControl = playButton;
 
         leaderboardDisplay.onBackPressed -= BackToMenu;

@@ -21,7 +21,7 @@ public class CreditsButton : MonoBehaviour
 
     private void ShowCredits(BaseUIControl control)
     {
-        mainUIGroup.SetEnable(false);
+        mainUIGroup.EnableUI(false);
 
         mainMenuCanvas.FadeOut(0.5f);
 
@@ -40,7 +40,7 @@ public class CreditsButton : MonoBehaviour
         var canvasGroup = creditsScroll.GetComponent<CanvasGroup>();
         canvasGroup.FadeOut(0.5f);
 
-        mainUIGroup.SetEnable(true);
+        mainUIGroup.EnableUI(true);
         mainUIGroup.selectedControl = playButton;
 
         creditsScroll.onEndScroll -= BackToMenu;
